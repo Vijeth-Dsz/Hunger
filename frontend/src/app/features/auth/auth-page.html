@@ -1,0 +1,48 @@
+<main class="auth-shell">
+  <header class="topbar">
+    <a class="brand" routerLink="/login" aria-label="Hunger home"><span class="brand-mark">h</span> hunger</a>
+    <span class="top-note">GOOD FOOD. SHARED WITH CARE.</span>
+  </header>
+  <section class="auth-layout">
+    <div class="welcome-copy">
+      <p class="eyebrow">A COMMUNITY THAT CARES</p>
+      <h1>Food belongs<br />on <span>every table.</span></h1>
+      <p>Hunger brings food donors and community organizations together so good food reaches people who need it.</p>
+      <div class="impact-note"><span aria-hidden="true">✳</span><p>Share surplus meals, groceries, and a little hope.</p></div>
+    </div>
+    <section class="auth-card" aria-labelledby="auth-title">
+      <div class="card-heading">
+        <p class="eyebrow">{{ registering() ? 'JOIN THE HUNGER COMMUNITY' : 'WELCOME TO HUNGER' }}</p>
+        <h2 id="auth-title">{{ registering() ? 'Create your account' : 'Sign in' }}</h2>
+        <p>{{ registering() ? 'Tell us how you would like to help.' : 'Continue your work in the community.' }}</p>
+      </div>
+      @if (notice()) { <p class="notice" role="status">{{ notice() }}</p> }
+      <form class="auth-form" (ngSubmit)="submit()">
+        @if (registering()) {
+          <label for="name">Your name</label>
+          <input id="name" name="name" autocomplete="name" maxlength="120" required [(ngModel)]="name" placeholder="Full name" />
+        }
+        <label for="email">Email address</label>
+        <input id="email" name="email" type="email" autocomplete="email" maxlength="254" required [(ngModel)]="email" placeholder="you@example.org" />
+        @if (registering()) {
+          <label for="organization">Organization</label>
+          <input id="organization" name="organization" maxlength="160" required [(ngModel)]="organizationName" placeholder="Restaurant, NGO, community kitchen…" />
+          <label for="role">I am joining as a</label>
+          <select id="role" name="role" [(ngModel)]="role">
+            <option value="Donor">Donor — share food or groceries</option>
+            <option value="Recipient">Recipient — request donations for an NGO</option>
+          </select>
+        }
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" [attr.autocomplete]="registering() ? 'new-password' : 'current-password'" [minlength]="registering() ? 10 : 1" required [(ngModel)]="password" placeholder="{{ registering() ? 'At least 10 characters' : 'Your password' }}" />
+        @if (error()) { <p class="form-error" role="alert">{{ error() }}</p> }
+        <button type="submit" [disabled]="submitting() || !email.trim() || !password || (registering() && (!name.trim() || !organizationName.trim()))">
+          {{ submitting() ? 'Please wait…' : registering() ? 'Create account' : 'Sign in' }}
+        </button>
+      </form>
+      <p class="switch-mode">{{ registering() ? 'Already part of Hunger?' : 'New to Hunger?' }} <button type="button" (click)="toggleMode()">{{ registering() ? 'Sign in' : 'Create an account' }}</button></p>
+      <p class="verification-note">Recipient organizations are reviewed before they can request donations.</p>
+    </section>
+  </section>
+  <footer class="auth-footer">A LOCAL COMMUNITY. A SHARED TABLE. <span aria-hidden="true">✳</span></footer>
+</main>

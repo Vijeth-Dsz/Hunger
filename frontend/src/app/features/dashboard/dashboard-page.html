@@ -1,0 +1,96 @@
+<main class="dashboard-shell">
+  <header class="topbar">
+    <a class="brand" href="/dashboard"><span class="brand-mark">h</span> hunger</a>
+    <div class="user-menu">
+      @if (account(); as user) {
+        <span class="user-info"><strong>{{ user.organizationName }}</strong><small>{{ user.name }} · {{ label(user.role) }}</small></span>
+        <button class="sign-out" type="button" (click)="logout()">Sign out</button>
+      }
+    </div>
+  </header>
+
+  <section class="welcome-row">
+    <div><p class="eyebrow">{{ isAdmin ? 'HUNGER ADMINISTRATION' : 'COMMUNITY DASHBOARD' }}</p>
+      <h1>{{ isAdmin ? 'Good work starts with care.' : 'Welcome, ' + (account()?.name || 'friend') + '.' }}</h1>
+      <p class="welcome-copy">{{ isDonor ? 'Share good food and groceries with people in your community.' : isRecipient ? 'Find donations and keep track of the support reaching your community.' : 'Help make sure every good donation reaches a trusted organization.' }}</p>
+    </div>
+    @if (isRecipient && account()?.verificationStatus === 'Pending') { <span class="verification-pill">Verification pending</span> }
+  </section>
+
+  @if (error()) { <p class="alert error" role="alert">{{ error() }}</p> }
+  @if (success()) { <p class="alert success" role="status">{{ success() }}</p> }
+
+  <section class="stats" aria-label="Donation summary">
+    <article class="stat-card"><span class="stat-icon">◎</span><div><strong>{{ summary().total }}</strong><small>{{ isAdmin ? 'Donations on Hunger' : 'Donations in your journey' }}</small></div></article>
+    <article class="stat-card"><span class="stat-icon">↗</span><div><strong>{{ summary().active }}</strong><small>Active donations</small></div></article>
+    <article class="stat-card"><span class="stat-icon">✓</span><div><strong>{{ summary().delivered }}</strong><small>Successfully delivered</small></div></article>
+  </section>
+
+  @if (isRecipient && account()?.verificationStatus === 'Pending') {
+    <section class="pending-banner"><span class="pending-icon">⌛</span><div><h2>We’re verifying your organization</h2><p>You can explore available donations. Once an administrator verifies your organization, you’ll be able to request them.</p></div></section>
+  }
+
+  @if (isDonor) {
+    <section class="panel donation-form-panel">
+      <div class="panel-heading"><div><p class="eyebrow">GIVE WHAT YOU CAN</p><h2>{{ editingDonationId() ? 'Edit donation' : 'Share a donation' }}</h2></div><span class="safe-note">Freshness and pickup details help us coordinate safely.</span></div>
+      <form class="donation-form" (ngSubmit)="editingDonationId() ? saveDonation() : createDonation()">
+        <label>What are you donating?<input name="title" required maxlength="160" [(ngModel)]="title" placeholder="e.g. Freshly prepared lunch boxes" /></label>
+        <label>Donation type<select name="type" [(ngModel)]="type"><option value="PreparedFood">Prepared food</option><option value="Groceries">Groceries</option></select></label>
+        <label class="wide">Description<textarea name="description" required maxlength="1200" rows="2" [(ngModel)]="description" placeholder="Describe the food or grocery items and how they are packed"></textarea></label>
+        <label>Quantity<input name="quantity" required maxlength="80" [(ngModel)]="quantity" placeholder="e.g. 25" /></label>
+        <label>Unit<input name="unit" maxlength="40" [(ngModel)]="unit" placeholder="servings, bags, kg" /></label>
+        <label class="wide">Pickup address<input name="address" required maxlength="300" [(ngModel)]="pickupAddress" placeholder="Street, area, city" /></label>
+        <label>Pickup available from<input name="pickupFrom" type="datetime-local" required [(ngModel)]="pickupFrom" /></label>
+        <label>Pickup deadline<input name="pickupUntil" type="datetime-local" required [(ngModel)]="pickupUntil" /></label>
+        <label>Storage instructions<input name="storage" maxlength="500" [(ngModel)]="storageInstructions" placeholder="Keep chilled, collect promptly…" /></label>
+        <label>Allergens / dietary notes<input name="allergens" maxlength="500" [(ngModel)]="allergens" placeholder="List known allergens or say none known" /></label>
+        <div class="form-footnote">Only post items you can safely donate. Clearly disclose known allergens and storage needs.</div>
+        <div class="form-actions"><button class="primary-button submit-donation" type="submit" [disabled]="busy()">{{ busy() ? 'Saving…' : editingDonationId() ? 'Save changes' : 'Publish donation' }}</button>@if (editingDonationId()) { <button class="text-button" type="button" [disabled]="busy()" (click)="cancelEdit()">Cancel edit</button> }</div>
+      </form>
+    </section>
+  }
+
+  @if (isAdmin) {
+    <section class="panel review-panel">
+      <div class="panel-heading"><div><p class="eyebrow">TRUSTED COMMUNITY</p><h2>Recipient organizations to verify</h2></div></div>
+      @if (pendingRecipients().length === 0) { <p class="empty-copy">No organizations are waiting for review.</p> }
+      @for (recipient of pendingRecipients(); track recipient.id) {
+        <div class="review-row"><div><strong>{{ recipient.organizationName }}</strong><span>{{ recipient.name }} · {{ recipient.email }}</span></div><button class="primary-button small-button" type="button" [disabled]="busy()" (click)="approveRecipient(recipient)">Verify organization</button></div>
+      }
+    </section>
+  }
+
+  <section class="donations-section">
+    <div class="section-heading"><div><p class="eyebrow">{{ isRecipient ? 'AVAILABLE TO YOUR ORGANIZATION' : isAdmin ? 'COMMUNITY ACTIVITY' : 'YOUR COMMUNITY IMPACT' }}</p><h2>{{ isRecipient ? 'Find a donation' : isAdmin ? 'Donations' : 'Your donations' }}</h2></div>
+      <div class="filters"><button type="button" [class.active]="selectedType() === 'All'" (click)="selectedType.set('All')">All</button><button type="button" [class.active]="selectedType() === 'PreparedFood'" (click)="selectedType.set('PreparedFood')">Prepared food</button><button type="button" [class.active]="selectedType() === 'Groceries'" (click)="selectedType.set('Groceries')">Groceries</button></div>
+    </div>
+    @if (loading()) { <div class="empty-panel">Loading Hunger community…</div> }
+    @else if (visibleDonations().length === 0) { <div class="empty-panel"><span class="empty-flower">✳</span><h3>{{ isRecipient ? 'No matching donations yet' : 'Your next good thing starts here' }}</h3><p>{{ isRecipient ? 'Check back soon for available food and grocery donations.' : 'Donations you create will appear here for tracking.' }}</p></div> }
+    @else {
+      <div class="donation-grid">
+        @for (donation of visibleDonations(); track donation.id) {
+          <article class="donation-card">
+            <div class="card-top"><span class="type-pill" [class.grocery-pill]="donation.type === 'Groceries'">{{ label(donation.type) }}</span><span class="status-pill" [attr.data-status]="donation.status">{{ label(donation.status) }}</span></div>
+            <h3>{{ donation.title }}</h3><p class="donation-description">{{ donation.description }}</p>
+            <div class="donation-meta"><span><b>Quantity</b>{{ donation.quantity }} {{ donation.unit }}</span><span><b>Donor</b>{{ donation.donorOrganization }}</span></div>
+            @if (donation.allergens) { <p class="detail-note"><b>Allergens / notes:</b> {{ donation.allergens }}</p> }
+            @if (donation.storageInstructions) { <p class="detail-note"><b>Storage:</b> {{ donation.storageInstructions }}</p> }
+            <div class="pickup-info"><strong>Pickup window</strong><span>{{ formatDate(donation.pickupFrom) }} – {{ formatDate(donation.pickupUntil) }}</span><span>{{ donation.pickupAddress }}</span></div>
+            @if (donation.recipientOrganization) { <p class="recipient-line">Matched with <strong>{{ donation.recipientOrganization }}</strong></p> }
+            <div class="card-actions">
+              @if (isRecipient && account()?.verificationStatus === 'Approved' && donation.status === 'Available') { <button class="primary-button" type="button" [disabled]="busy()" (click)="requestDonation(donation)">Request donation</button> }
+              @if (isDonor && donation.status === 'Requested') { <button class="primary-button" type="button" [disabled]="busy()" (click)="acceptDonation(donation)">Accept request</button> }
+              @if (isRecipient && donation.status === 'Accepted') { <button class="primary-button" type="button" [disabled]="busy()" (click)="updateStatus(donation, 'PickedUp')">Confirm pickup</button> }
+              @if ((isRecipient || isDonor) && donation.status === 'PickedUp') { <button class="primary-button" type="button" [disabled]="busy()" (click)="updateStatus(donation, 'Delivered')">Confirm delivered</button> }
+              @if (isDonor && donation.status === 'Available') { <button class="text-button" type="button" [disabled]="busy()" (click)="editDonation(donation)">Edit listing</button><button class="text-button danger-text" type="button" [disabled]="busy()" (click)="deleteDonation(donation)">Delete listing</button> }
+              @if (isDonor && ['Requested','Accepted'].includes(donation.status)) { <button class="text-button danger-text" type="button" [disabled]="busy()" (click)="updateStatus(donation, 'Cancelled')">Cancel listing</button> }
+              <button class="text-button" type="button" (click)="toggleHistory(donation)">{{ history()[donation.id] ? 'Hide tracking' : 'Track donation' }}</button>
+            </div>
+            @if (history()[donation.id]; as events) { <ol class="timeline">@for (event of events; track event.changedAt) { <li><span class="timeline-dot"></span><div><strong>{{ label(event.status) }}</strong><small>{{ formatDate(event.changedAt) }} · {{ event.changedBy }}</small></div></li>}</ol> }
+          </article>
+        }
+      </div>
+    }
+  </section>
+  <footer class="page-footer">GOOD FOOD. SHARED WITH CARE. <span aria-hidden="true">✳</span></footer>
+</main>

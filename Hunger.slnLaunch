@@ -1,0 +1,20 @@
+{
+  "version": "0.2",
+  "configurations": [
+	{
+		"name": "Hunger Full Stack",
+		"projects": [
+		{
+			"name": "Hunger.Api",
+			"project": "backend\\Hunger.Api.csproj",
+		  "command": "Project"
+		},
+		{
+			"name": "Hunger.Frontend",
+			"project": "frontend\\Hunger.Frontend.njsproj",
+		  "command": "Project"
+		}
+	  ]
+	}
+  ]
+}

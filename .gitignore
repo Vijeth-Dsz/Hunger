@@ -1,0 +1,7 @@
+.vs/
+**/node_modules/
+**/dist/
+**/.angular/cache/
+**/bin/
+**/obj/
+backend/appsettings.Development.json
