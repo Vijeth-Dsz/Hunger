@@ -1,0 +1,319 @@
+@if (error()) {
+  <p class="alert error" role="alert">{{ error() }}</p>
+}
+@if (success()) {
+  <p class="alert success" role="status">{{ success() }}</p>
+}
+@if (!approved && activeTab === 'overview') {
+  <section class="pending-banner">
+    <span class="pending-icon" aria-hidden="true">⌛</span>
+    <div>
+      <h2>{{ dashboardCopy.accountReviewTitle }}</h2>
+      <p>{{ copy.pendingDescription }}</p>
+    </div>
+  </section>
+}
+
+@if (activeTab === 'overview') {
+<section id="recipient-overview" class="role-overview" aria-labelledby="recipient-overview-title">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">{{ copy.overviewEyebrow }}</p>
+      <h2 id="recipient-overview-title">{{ copy.overviewTitle }}</h2>
+    </div>
+  </div>
+  <div class="role-overview-grid">
+    <button class="role-overview-card" type="button" (click)="tabChange.emit('requests')">
+      <strong>{{ loading() ? '…' : needs().length }}</strong>
+      <span>{{ copy.overviewMyRequests }}</span>
+    </button>
+    <button class="role-overview-card" type="button" (click)="tabChange.emit('requests')">
+      <strong>{{ loading() ? '…' : publishedRequestCount() }}</strong>
+      <span>{{ copy.overviewPublishedRequests }}</span>
+    </button>
+    <button class="role-overview-card" type="button" (click)="tabChange.emit('donations')">
+      <strong>{{ loading() ? '…' : availableDonationsCount() }}</strong>
+      <span>{{ copy.overviewAvailableDonations }}</span>
+    </button>
+    <button class="role-overview-card" type="button" (click)="tabChange.emit('donations')">
+      <strong>{{ loading() ? '…' : activeDonationsCount() }}</strong>
+      <span>{{ copy.overviewActiveDonations }}</span>
+    </button>
+  </div>
+  <div class="role-guide">
+    <h3>{{ copy.guideTitle }}</h3>
+    <ol>
+      <li>{{ copy.guideRequest }}</li>
+      <li>{{ copy.guideContributions }}</li>
+      <li>{{ copy.guideReceive }}</li>
+    </ol>
+    @if (approved) {
+      <button class="guide-link" type="button" (click)="tabChange.emit('create')">{{ copy.requestSuppliesLink }}</button>
+      <button class="guide-link" type="button" (click)="tabChange.emit('donations')">{{ copy.availableDonationsLink }}</button>
+    }
+  </div>
+
+  <div class="overview-records">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">{{ copy.requestEyebrowShort }}</p>
+        <h2>{{ copy.overviewListTitle }}</h2>
+      </div>
+      <button class="text-button" type="button" (click)="tabChange.emit('requests')">{{ copy.overviewRequestsLink }}</button>
+    </div>
+    @if (loading()) {
+      <div class="empty-panel">{{ commonCopy.loadingRequests }}</div>
+    } @else if (needs().length === 0) {
+      <div class="empty-panel">{{ copy.noRequestsCopy }}</div>
+    } @else {
+      <div class="record-list">
+        @for (need of needs().slice(0, 3); track need.id) {
+          <app-expandable-record [title]="need.title" [category]="label(need.type)" [status]="need.reviewStatus" [statusLabel]="label(need.reviewStatus)">
+            <p class="progress-copy">{{ need.fulfilledQuantity }} / {{ need.quantity }} {{ need.unit }} {{ commonCopy.received }} · {{ label(need.status) }}</p>
+            <div class="progress-track"><span [style.width.%]="progress(need)"></span></div>
+          </app-expandable-record>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="overview-records">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">{{ copy.availableEyebrow }}</p>
+        <h2>{{ copy.overviewDonationsListTitle }}</h2>
+      </div>
+      <button class="text-button" type="button" (click)="tabChange.emit('donations')">{{ copy.overviewDonationsLink }}</button>
+    </div>
+    @if (loading()) {
+      <div class="empty-panel">{{ copy.loadingDonations }}</div>
+    } @else if (visibleDonations().length === 0) {
+      <div class="empty-panel">{{ copy.noDonationsCopy }}</div>
+    } @else {
+      <div class="record-list">
+        @for (donation of visibleDonations().slice(0, 3); track donation.id) {
+          <app-expandable-record [title]="donation.title" [category]="label(donation.type)" [status]="donation.status" [statusLabel]="statusLabel(donation.status)">
+            <p class="progress-copy">{{ donation.quantity }} {{ donation.unit }} · {{ copy.matchedDonor }} {{ donation.donorOrganization }}</p>
+          </app-expandable-record>
+        }
+      </div>
+    }
+  </div>
+</section>
+}
+
+@if (activeTab === 'create') {
+  @if (approved) {
+  <section class="panel request-form-panel" id="request-support">
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">{{ copy.requestEyebrow }}</p>
+        <h2>{{ editingNeedId() ? copy.editRequest : copy.requestTitle }}</h2>
+      </div>
+      <span class="safe-note">{{ copy.requestNote }}</span>
+    </div>
+    <form class="workflow-form" (ngSubmit)="saveNeed()">
+      <label>
+        {{ copy.itemNeeded }}
+        <input name="needTitle" required maxlength="160" [(ngModel)]="needTitle" [placeholder]="copy.itemPlaceholder" />
+      </label>
+      <label>
+        {{ copy.category }}
+        <select name="needType" [(ngModel)]="needType">
+          <option value="PreparedFood">{{ commonCopy.preparedFood }}</option>
+          <option value="Groceries">{{ commonCopy.groceries }}</option>
+          <option value="Stationery">{{ commonCopy.stationery }}</option>
+        </select>
+      </label>
+      <label class="wide">
+        {{ copy.whyNeeded }}
+        <textarea name="needDescription" required maxlength="1200" rows="3" [(ngModel)]="needDescription" [placeholder]="copy.requestDescription"></textarea>
+      </label>
+      <label>
+        {{ copy.quantityRequested }}
+        <input name="needQuantity" type="number" min="0.01" step="0.01" required [(ngModel)]="needQuantity" />
+      </label>
+      <label>
+        {{ commonCopy.unit }}
+        <input name="needUnit" required maxlength="40" [(ngModel)]="needUnit" [placeholder]="copy.unitPlaceholder" />
+      </label>
+      <label>
+        {{ copy.neededBy }}
+        <input name="neededBy" type="datetime-local" required [(ngModel)]="neededBy" />
+      </label>
+      <div class="form-actions">
+        <button class="primary-button" type="submit" [disabled]="busy()">
+          {{ busy() ? commonCopy.saving : editingNeedId() ? copy.saveRequest : copy.submitRequest }}
+        </button>
+        @if (editingNeedId()) {
+          <button class="text-button" type="button" [disabled]="busy()" (click)="cancelEdit()">{{ copy.cancelEdit }}</button>
+        }
+      </div>
+    </form>
+  </section>
+  } @else {
+    <section class="pending-banner" role="status">
+      <span class="pending-icon" aria-hidden="true">⌛</span>
+      <div>
+        <h2>{{ dashboardCopy.accountReviewTitle }}</h2>
+        <p>{{ commonCopy.organizationVerification }}</p>
+      </div>
+    </section>
+  }
+}
+
+@if (activeTab === 'requests') {
+<section id="needs" class="needs-section">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">{{ copy.requestEyebrowShort }}</p>
+      <h2>{{ copy.requestListTitle }}</h2>
+    </div>
+    <button class="text-button" type="button" [disabled]="loading()" (click)="refreshStatuses()">{{ commonCopy.refreshStatuses }}</button>
+  </div>
+  <app-portal-list-filters
+    [query]="needQuery()"
+    [searchLabel]="commonCopy.filterSearch"
+    [searchPlaceholder]="commonCopy.filterSearchPlaceholder"
+    [typeLabel]="commonCopy.filterType"
+    [statusLabel]="commonCopy.filterStatus"
+    [types]="typeOptions"
+    [statuses]="needStatusOptions"
+    [selectedType]="filterNeedType()"
+    [selectedStatus]="needStatus()"
+    (queryChange)="needQuery.set($event)"
+    (typeChange)="filterNeedType.set($event)"
+    (statusChange)="needStatus.set($event)" />
+
+  @if (loading()) {
+    <div class="empty-panel">{{ commonCopy.loadingRequests }}</div>
+  } @else if (visibleNeeds().length === 0) {
+    <div class="empty-panel">
+      <span class="empty-flower" aria-hidden="true">⌂</span>
+      <p>{{ needs().length > 0 ? commonCopy.noMatchingResults : copy.noRequestsCopy }}</p>
+    </div>
+  } @else {
+    <div class="record-list">
+      @for (need of visibleNeeds(); track need.id) {
+        <app-expandable-record [title]="need.title" [category]="label(need.type)" [status]="need.status" [statusLabel]="statusLabel(need.status)">
+          <p class="donation-description">{{ need.description }}</p>
+          <div class="record-review-status"><span>{{ commonCopy.requestReviewStatus }}:</span> <span class="status-pill" [attr.data-status]="need.reviewStatus">{{ label(need.reviewStatus) }}</span><span>{{ commonCopy.requestProgressStatus }}:</span> <span class="status-pill" [attr.data-status]="need.status">{{ statusLabel(need.status) }}</span></div>
+          <p class="need-byline">{{ copy.neededBy }} {{ formatDate(need.neededBy) }}</p>
+          <div class="progress-track"><span [style.width.%]="progress(need)"></span></div>
+          <p class="progress-copy">{{ need.fulfilledQuantity }} / {{ need.quantity }} {{ need.unit }} {{ commonCopy.received }}</p>
+          @if (approved && canEditNeed(need)) {
+            <div class="card-actions">
+              <button class="text-button" type="button" [disabled]="busy()" (click)="editNeed(need)">{{ copy.editRequest }}</button>
+              <button class="text-button danger-text" type="button" [disabled]="busy()" (click)="deleteNeed(need)">{{ copy.deleteRequest }}</button>
+            </div>
+          }
+          <div class="contribution-list">
+            @for (item of contributions()[need.id] ?? []; track item.id) {
+              <div class="contribution-row">
+                <span>
+                  <strong>{{ item.quantity }} {{ item.unit }}</strong>
+                  · {{ item.donorOrganization }} · <span class="status-pill" [attr.data-status]="item.status">{{ statusLabel(item.status) }}</span>
+                  @if (item.expiresAt) {
+                    <small>{{ commonCopy.useBy }} {{ formatDate(item.expiresAt) }}</small>
+                  }
+                </span>
+                @if (approved && item.status === 'Approved') {
+                  <button class="primary-button small-button" type="button" [disabled]="busy()" (click)="receiveContribution(item)">{{ commonCopy.confirmReceived }}</button>
+                }
+              </div>
+            } @empty {
+              <p class="empty-copy">{{ copy.contributionsEmpty }}</p>
+            }
+          </div>
+        </app-expandable-record>
+      }
+    </div>
+  }
+</section>
+}
+
+@if (activeTab === 'donations') {
+<section id="donations" class="donations-section">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">{{ copy.availableEyebrow }}</p>
+      <h2>{{ copy.availableTitle }}</h2>
+    </div>
+    </div>
+    <app-portal-list-filters
+      [query]="donationQuery()"
+      [searchLabel]="commonCopy.filterSearch"
+      [searchPlaceholder]="commonCopy.filterSearchPlaceholder"
+      [typeLabel]="commonCopy.filterType"
+      [statusLabel]="commonCopy.filterStatus"
+      [types]="typeOptions"
+      [statuses]="donationStatusOptions"
+      [selectedType]="selectedType()"
+      [selectedStatus]="donationStatus()"
+      (queryChange)="donationQuery.set($event)"
+      (typeChange)="selectedType.set($event)"
+      (statusChange)="donationStatus.set($event)" />
+
+    @if (loading()) {
+    <div class="empty-panel">{{ copy.loadingDonations }}</div>
+  } @else if (visibleDonations().length === 0) {
+    <div class="empty-panel">
+      <span class="empty-flower" aria-hidden="true">✳</span>
+      <p>{{ donations().length > 0 ? commonCopy.noMatchingResults : copy.noDonationsCopy }}</p>
+    </div>
+  } @else {
+    <div class="record-list">
+      @for (donation of visibleDonations(); track donation.id) {
+        <app-expandable-record [title]="donation.title" [category]="label(donation.type)" [status]="donation.status" [statusLabel]="statusLabel(donation.status)">
+          <p class="donation-description">{{ donation.description }}</p>
+          <div class="donation-meta">
+            <span><b>{{ copy.quantityLabel }}</b>{{ donation.quantity }} {{ donation.unit }}</span>
+            <span><b>{{ copy.matchedDonor }}</b>{{ donation.donorOrganization }}</span>
+          </div>
+          @if (donation.expiresAt) {
+            <p class="detail-note"><b>{{ commonCopy.useBy }}:</b> {{ formatDate(donation.expiresAt) }}</p>
+          }
+          @if (donation.allergens) {
+            <p class="detail-note"><b>{{ copy.allergensDetails }}</b> {{ donation.allergens }}</p>
+          }
+          @if (donation.storageInstructions) {
+            <p class="detail-note"><b>{{ copy.storageDetails }}</b> {{ donation.storageInstructions }}</p>
+          }
+          <div class="pickup-info">
+            <strong>{{ copy.pickupWindow }}</strong>
+            <span>{{ formatDate(donation.pickupFrom) }} – {{ formatDate(donation.pickupUntil) }}</span>
+            <span>{{ donation.pickupAddress }}</span>
+          </div>
+          <div class="card-actions">
+            @if (approved && donation.status === 'Available') {
+              <button class="primary-button" type="button" [disabled]="busy()" (click)="requestDonation(donation)">{{ copy.requestDonation }}</button>
+            }
+            @if (approved && donation.status === 'Accepted') {
+              <button class="primary-button" type="button" [disabled]="busy()" (click)="updateDonation(donation, 'PickedUp')">{{ copy.confirmPickup }}</button>
+            }
+            @if (approved && donation.status === 'PickedUp') {
+              <button class="primary-button" type="button" [disabled]="busy()" (click)="updateDonation(donation, 'Delivered')">{{ copy.confirmReceived }}</button>
+            }
+            <button class="text-button" type="button" (click)="toggleHistory(donation)">
+              {{ history()[donation.id] ? copy.hideTracking : copy.trackDonation }}
+            </button>
+          </div>
+          @if (history()[donation.id]; as events) {
+            <ol class="timeline">
+              @for (event of events; track event.changedAt) {
+                <li>
+                  <span class="timeline-dot"></span>
+                  <div>
+                    <strong>{{ statusLabel(event.status) }}</strong>
+                    <small>{{ formatDate(event.changedAt) }} · {{ event.changedBy }}</small>
+                  </div>
+                </li>
+              }
+            </ol>
+          }
+        </app-expandable-record>
+      }
+    </div>
+  }
+</section>
+}

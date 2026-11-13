@@ -1,0 +1,208 @@
+:host {
+  display: block;
+}
+
+.admin-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 20px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, .96);
+}
+
+.admin-tabs button {
+  min-height: 42px;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #627168;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.admin-tabs button:hover,
+.admin-tabs button:focus-visible,
+.admin-tabs button.active {
+  border-color: #e2ebe2;
+  background: #f1f6f0;
+  color: var(--green);
+  outline: none;
+}
+
+.admin-tabs button.active {
+  box-shadow: inset 0 -2px 0 var(--green);
+}
+
+.admin-overview {
+  margin: 0 0 28px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.admin-overview h2 {
+  margin: 0 0 14px;
+  font: 400 21px Georgia, serif;
+}
+
+.admin-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-overview-card {
+  display: grid;
+  gap: 5px;
+  padding: 13px;
+  border-radius: 8px;
+  background: #f7f9f6;
+}
+
+.admin-overview-card strong {
+  color: var(--ink);
+  font: 400 23px Georgia, serif;
+}
+
+.admin-overview-card span {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.admin-section {
+  margin: 0 0 28px;
+  scroll-margin-top: 76px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.review-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.review-table th,
+.review-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #eff1ee;
+  color: #536159;
+  font-size: 10px;
+  vertical-align: top;
+}
+
+.review-table th {
+  color: #77827a;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.review-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.review-table small {
+  display: block;
+  margin-top: 4px;
+  color: #859088;
+  line-height: 1.5;
+}
+
+.review-table .status-pill {
+  white-space: nowrap;
+}
+
+.proof-document-link {
+  display: block;
+  margin-top: 7px;
+  color: var(--green);
+  font-weight: 600;
+}
+
+.review-table .empty-copy {
+  padding: 18px;
+  text-align: center;
+}
+
+.review-actions {
+  min-width: 130px;
+}
+
+@media (max-width: 760px) {
+  .admin-overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .review-table {
+    min-width: 700px;
+  }
+
+  .admin-overview h2 {
+    font-size: 23px;
+  }
+}
+
+.admin-overview-card span {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.review-table th,
+.review-table td {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.review-table th {
+  font-size: 12px;
+}
+
+.review-table small {
+  font-size: 12px;
+}
+
+.review-actions .primary-button,
+.review-actions .text-button {
+  min-height: 40px;
+  font-size: 13px;
+}
+
+@media (max-width: 520px) {
+  .admin-tabs {
+    gap: 4px;
+    overflow-x: auto;
+  }
+
+  .admin-tabs button {
+    min-height: 42px;
+    padding: 8px 11px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .admin-overview {
+    padding: 14px;
+  }
+
+  .admin-section {
+    scroll-margin-top: 12px;
+  }
+}

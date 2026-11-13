@@ -1,0 +1,305 @@
+.rejected-pill {
+  background: #fbefed;
+  color: #a1443c;
+}
+
+.role-overview {
+  margin: 0 0 28px;
+  scroll-margin-top: 76px;
+}
+
+.role-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.role-overview-card {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color .15s ease, transform .15s ease;
+}
+
+.role-overview-card:hover,
+.role-overview-card:focus-visible {
+  transform: translateY(-1px);
+  border-color: #9cb3a1;
+  outline: none;
+}
+
+.role-overview-card strong {
+  color: var(--green);
+  font: 400 24px Georgia, serif;
+}
+
+.role-overview-card span {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.role-guide {
+  margin-top: 14px;
+  padding: 17px 19px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+}
+
+.role-guide h3 {
+  margin: 0 0 9px;
+  font: 400 18px Georgia, serif;
+}
+
+.role-guide ol {
+  display: grid;
+  gap: 7px;
+  margin: 0 0 12px;
+  padding-left: 20px;
+  color: #657168;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.guide-link {
+  display: inline-block;
+  margin: 0 14px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--green);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.guide-link:hover,
+.guide-link:focus-visible {
+  text-decoration: underline;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 27px;
+}
+
+.admin-grid .panel {
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.review-actions {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px !important;
+}
+
+.review-actions .status-pill {
+  white-space: nowrap;
+}
+
+.danger-text:hover {
+  color: #843c34;
+}
+
+.workflow-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.workflow-form label,
+.contribution-form label {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+  color: #46564d;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.workflow-form input,
+.workflow-form select,
+.workflow-form textarea,
+.contribution-form input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid #dfe5df;
+  border-radius: 6px;
+  background: #fcfdfb;
+  color: var(--ink);
+  font: inherit;
+  font-size: 11px;
+}
+
+.workflow-form textarea {
+  resize: vertical;
+}
+
+.workflow-form input:focus,
+.workflow-form select:focus,
+.workflow-form textarea:focus,
+.contribution-form input:focus {
+  border-color: #8ba894;
+  outline: 2px solid #edf3ee;
+}
+
+.request-form-panel {
+  scroll-margin-top: 70px;
+}
+
+.needs-section {
+  padding-top: 4px;
+}
+
+.need-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.need-card {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.need-card h3 {
+  margin: 13px 0 6px;
+  font: 400 19px Georgia, serif;
+}
+
+.need-byline,
+.progress-copy,
+.review-note {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+.need-byline {
+  margin: 10px 0;
+}
+
+.progress-track {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #edf1ed;
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #64856d;
+  transition: width .2s ease;
+}
+
+.progress-copy {
+  margin: 7px 0 0;
+}
+
+.contribution-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 13px;
+}
+
+.contribution-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 7px;
+  background: #f7f9f6;
+  color: #657168;
+  font-size: 10px;
+}
+
+.contribution-row strong {
+  color: var(--ink);
+}
+
+.contribution-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+  margin-top: 13px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+}
+
+.contribution-form button {
+  justify-self: start;
+}
+
+.review-note {
+  margin: 9px 0 0;
+  color: #8d713c;
+}
+
+.status-pill[data-status="Pending"],
+.status-pill[data-status="PendingReview"] {
+  background: #fff4df;
+  color: #96712f;
+}
+
+.status-pill[data-status="Approved"],
+.status-pill[data-status="Fulfilled"],
+.status-pill[data-status="Delivered"] {
+  background: #e9f4eb;
+  color: #477852;
+}
+
+.status-pill[data-status="Rejected"],
+.status-pill[data-status="Cancelled"] {
+  background: #fbefed;
+  color: #a1443c;
+}
+
+@media (max-width: 760px) {
+  .role-overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-grid,
+  .need-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workflow-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .role-overview {
+    scroll-margin-top: 12px;
+  }
+
+  .workflow-form,
+  .contribution-form {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,198 @@
+@if (error()) {
+  <p class="alert error" role="alert">{{ error() }}</p>
+}
+@if (success()) {
+  <p class="alert success" role="status">{{ success() }}</p>
+}
+
+<nav class="admin-tabs" role="tablist" [attr.aria-label]="copy.adminMenuLabel">
+  <button id="accounts-tab" type="button" role="tab" aria-controls="admin-review" [attr.aria-selected]="activeTab() === 'accounts'" [class.active]="activeTab() === 'accounts'" (click)="activeTab.set('accounts')">{{ copy.identityTab }}</button>
+  <button id="donations-tab" type="button" role="tab" aria-controls="donations" [attr.aria-selected]="activeTab() === 'donations'" [class.active]="activeTab() === 'donations'" (click)="activeTab.set('donations')">{{ copy.donationsTab }}</button>
+  <button id="needs-tab" type="button" role="tab" aria-controls="needs" [attr.aria-selected]="activeTab() === 'needs'" [class.active]="activeTab() === 'needs'" (click)="activeTab.set('needs')">{{ copy.requestsTab }}</button>
+</nav>
+
+@if (loading()) {
+  <div class="empty-panel">{{ dashboardCopy.loadingQueues }}</div>
+} @else {
+  @if (activeTab() === 'accounts') {
+  <section class="admin-overview" aria-labelledby="admin-overview-title">
+    <h2 id="admin-overview-title">{{ copy.overviewTitle }}</h2>
+    <div class="admin-overview-grid">
+      <article class="admin-overview-card">
+        <strong>{{ pendingAccounts().length }}</strong>
+        <span>{{ copy.pendingAccounts }}</span>
+      </article>
+    </div>
+  </section>
+
+  <section id="admin-review" class="admin-section" role="tabpanel" aria-labelledby="accounts-tab">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">{{ copy.identityEyebrow }}</p>
+        <h2>{{ copy.peopleTitle }}</h2>
+      </div>
+    </div>
+    <app-portal-list-filters
+      [query]="accountQuery()"
+      [searchLabel]="commonCopy.filterSearch"
+      [searchPlaceholder]="commonCopy.filterSearchPlaceholder"
+      [typeLabel]="copy.role"
+      [statusLabel]="commonCopy.filterStatus"
+      [types]="accountRoles"
+      [statuses]="accountStatuses"
+      [selectedType]="accountRole()"
+      [selectedStatus]="accountStatus()"
+      (queryChange)="accountQuery.set($event)"
+      (typeChange)="accountRole.set($event)"
+      (statusChange)="accountStatus.set($event)" />
+    <div class="table-wrap">
+      <table class="review-table">
+        <thead>
+          <tr>
+            <th>{{ copy.organization }}</th>
+            <th>{{ copy.contact }}</th>
+            <th>{{ copy.role }}</th>
+            <th>{{ copy.verification }}</th>
+            <th>{{ copy.review }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (person of filteredAccounts(); track person.id) {
+            <tr>
+              <td>{{ person.organizationName }}</td>
+              <td>{{ person.name }}<small>{{ person.email }}</small></td>
+              <td>{{ label(person.role) }}</td>
+              <td>
+                <span class="status-pill" [attr.data-status]="person.verificationStatus">{{ label(person.verificationStatus) }}</span>
+                @if (person.hasVerificationDocument) {
+                  <a class="proof-document-link" [href]="api.verificationDocumentUrl(person.id)" target="_blank" rel="noopener">{{ copy.viewProofDocument }}</a>
+                } @else {
+                  <small>{{ copy.proofDocumentMissing }}</small>
+                }
+              </td>
+              <td>
+                <div class="review-actions">
+                  @if (person.verificationStatus !== 'Approved') {
+                    <button class="primary-button small-button" type="button" [disabled]="busy()" (click)="reviewAccount(person, 'Approved')">{{ commonCopy.approve }}</button>
+                  }
+                  @if (person.verificationStatus !== 'Rejected') {
+                    <button class="text-button danger-text" type="button" [disabled]="busy()" (click)="reviewAccount(person, 'Rejected')">{{ commonCopy.reject }}</button>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td class="empty-copy" colspan="5">{{ commonCopy.noMatchingResults }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+  }
+
+  @if (activeTab() === 'donations') {
+  <section id="donations" class="admin-section" role="tabpanel" aria-labelledby="donations-tab">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">{{ copy.safetyEyebrow }}</p>
+        <h2>{{ copy.allDonations }}</h2>
+      </div>
+    </div>
+    <app-portal-list-filters
+      [query]="donationQuery()"
+      [searchLabel]="commonCopy.filterSearch"
+      [searchPlaceholder]="commonCopy.filterSearchPlaceholder"
+      [typeLabel]="commonCopy.filterType"
+      [statusLabel]="commonCopy.filterStatus"
+      [types]="allTypes"
+      [statuses]="donationStatuses"
+      [selectedType]="donationType()"
+      [selectedStatus]="donationStatus()"
+      (queryChange)="donationQuery.set($event)"
+      (typeChange)="donationType.set($event)"
+      (statusChange)="donationStatus.set($event)" />
+    <div class="table-wrap">
+      <table class="review-table">
+        <thead>
+          <tr>
+            <th>{{ copy.donation }}</th>
+            <th>{{ copy.donor }}</th>
+            <th>{{ copy.category }}</th>
+            <th>{{ copy.quantityPickup }}</th>
+            <th>{{ copy.status }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (donation of filteredDonations(); track donation.id) {
+            <tr>
+              <td>{{ donation.title }}<small>{{ donation.description }}</small></td>
+              <td>{{ donation.donorOrganization }}</td>
+              <td>{{ label(donation.type) }}</td>
+              <td>
+                {{ donation.quantity }} {{ donation.unit }}
+                <small>{{ formatDate(donation.pickupFrom) }} – {{ formatDate(donation.pickupUntil) }}</small>
+                @if (donation.expiresAt) {
+                  <small>{{ commonCopy.useBy }} {{ formatDate(donation.expiresAt) }}</small>
+                }
+              </td>
+              <td><span class="status-pill" [attr.data-status]="donation.status">{{ label(donation.status) }}</span></td>
+            </tr>
+          } @empty {
+            <tr><td class="empty-copy" colspan="5">{{ commonCopy.noMatchingResults }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+  }
+
+  @if (activeTab() === 'needs') {
+  <section id="needs" class="admin-section" role="tabpanel" aria-labelledby="needs-tab">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">{{ copy.requestEyebrow }}</p>
+        <h2>{{ copy.recipientRequests }}</h2>
+      </div>
+    </div>
+    <app-portal-list-filters
+      [query]="needQuery()"
+      [searchLabel]="commonCopy.filterSearch"
+      [searchPlaceholder]="commonCopy.filterSearchPlaceholder"
+      [typeLabel]="commonCopy.filterType"
+      [statusLabel]="commonCopy.filterStatus"
+      [types]="allTypes"
+      [statuses]="needStatuses"
+      [selectedType]="needType()"
+      [selectedStatus]="needStatus()"
+      (queryChange)="needQuery.set($event)"
+      (typeChange)="needType.set($event)"
+      (statusChange)="needStatus.set($event)" />
+    <div class="table-wrap">
+      <table class="review-table">
+        <thead>
+          <tr>
+            <th>{{ copy.request }}</th>
+            <th>{{ copy.recipient }}</th>
+            <th>{{ commonCopy.quantity }}</th>
+            <th>{{ commonCopy.neededBy }}</th>
+            <th>{{ copy.status }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (need of filteredNeeds(); track need.id) {
+            <tr>
+              <td>{{ need.title }}<small>{{ need.description }}</small></td>
+              <td>{{ need.recipientOrganization }}</td>
+              <td>{{ need.quantity }} {{ need.unit }} · {{ label(need.type) }}</td>
+              <td>{{ formatDate(need.neededBy) }}</td>
+              <td><span class="status-pill" [attr.data-status]="need.status">{{ label(need.status) }}</span></td>
+            </tr>
+          } @empty {
+            <tr><td class="empty-copy" colspan="5">{{ commonCopy.noMatchingResults }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+  }
+}

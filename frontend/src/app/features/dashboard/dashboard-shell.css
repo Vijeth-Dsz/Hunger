@@ -1,0 +1,219 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.stat-icon svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.topbar {
+  min-height: 78px;
+  gap: 20px;
+}
+
+.brand {
+  gap: 11px;
+  font-size: 21px;
+}
+
+.brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  box-shadow: 0 5px 12px rgb(52 91 69 / 16%);
+}
+
+.brand-mark svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.user-info {
+  max-width: 220px;
+}
+
+.user-info strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.role-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border: 1px solid #e4ece5;
+  border-radius: 20px;
+  background: #f5f8f4;
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.role-label svg,
+.sign-out svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.sign-out {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.sign-out:hover,
+.sign-out:focus-visible {
+  border-color: #cbd9ce;
+  background: #f5f8f4;
+  color: var(--green);
+  outline: none;
+}
+
+.welcome-row {
+  align-items: center;
+  gap: 32px;
+  min-height: 230px;
+  padding: 35px 0 28px;
+}
+
+.welcome-content {
+  flex: 1 1 auto;
+}
+
+.account-rejected-message {
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  border: 1px solid #e8c8c3;
+  border-radius: 10px;
+  background: #fbefed;
+  color: #8d3932;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.role-illustration {
+  display: block;
+  width: min(34%, 300px);
+  min-width: 210px;
+  aspect-ratio: 520 / 360;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 12px 28px rgb(37 53 47 / 8%);
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    gap: 12px;
+  }
+
+  .user-menu {
+    gap: 10px;
+  }
+
+  .user-info {
+    max-width: 180px;
+  }
+}
+
+@media (max-width: 760px) {
+  .welcome-row {
+    gap: 18px;
+  }
+
+  .role-illustration {
+    width: min(48%, 260px);
+    min-width: 180px;
+    align-self: center;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .topbar {
+    min-height: 68px;
+    height: auto;
+    gap: 8px;
+  }
+
+  .brand {
+    font-size: 18px;
+  }
+
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+  }
+
+  .user-menu {
+    gap: 7px;
+  }
+
+  .user-info {
+    max-width: 105px;
+  }
+
+  .user-info strong {
+    font-size: 12px;
+  }
+
+  .user-info small {
+    font-size: 11px;
+  }
+
+  .role-label {
+    gap: 4px;
+    padding: 6px 7px;
+    font-size: 11px;
+  }
+
+  .sign-out {
+    padding: 7px;
+    font-size: 0;
+  }
+
+  .sign-out svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .welcome-row {
+    align-items: start;
+    flex-direction: column;
+    padding-top: 25px;
+  }
+
+  .role-illustration {
+    width: 100%;
+    max-width: 360px;
+    min-width: 0;
+    align-self: stretch;
+  }
+}

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CreateDonation, DashboardSummary, Donation, PendingRecipient, StatusHistoryItem } from '../models/donation.model';
+import { AdminAccount, CommunityNeed, CreateContribution, CreateDonation, CreateNeed, DashboardSummary, Donation, NeedContribution, ReviewStatus, StatusHistoryItem } from '../models/donation.model';
 
 @Injectable({ providedIn: 'root' })
 export class DonationsService {
@@ -44,11 +44,44 @@ export class DonationsService {
     return this.http.get<StatusHistoryItem[]>(`${this.apiUrl}/donations/${id}/history`);
   }
 
-  pendingRecipients(): Observable<PendingRecipient[]> {
-    return this.http.get<PendingRecipient[]>(`${this.apiUrl}/admin/recipients`);
+  needs(): Observable<CommunityNeed[]> {
+    return this.http.get<CommunityNeed[]>(`${this.apiUrl}/needs`);
   }
 
-  approveRecipient(id: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/admin/recipients/${id}/approve`, {});
+  createNeed(need: CreateNeed): Observable<{ id: string; reviewStatus: ReviewStatus }> {
+    return this.http.post<{ id: string; reviewStatus: ReviewStatus }>(`${this.apiUrl}/needs`, need);
   }
+
+  updateNeed(id: string, need: CreateNeed): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/needs/${id}`, need);
+  }
+
+  deleteNeed(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/needs/${id}`);
+  }
+
+  contributions(needId: string): Observable<NeedContribution[]> {
+    return this.http.get<NeedContribution[]>(`${this.apiUrl}/needs/${needId}/contributions`);
+  }
+
+  contribute(needId: string, contribution: CreateContribution): Observable<{ id: string; status: string }> {
+    return this.http.post<{ id: string; status: string }>(`${this.apiUrl}/needs/${needId}/contributions`, contribution);
+  }
+
+  receiveContribution(id: string): Observable<{ status: string; successful: boolean }> {
+    return this.http.post<{ status: string; successful: boolean }>(`${this.apiUrl}/contributions/${id}/received`, {});
+  }
+
+  adminAccounts(): Observable<AdminAccount[]> {
+    return this.http.get<AdminAccount[]>(`${this.apiUrl}/admin/accounts`);
+  }
+
+  reviewAccount(id: string, status: 'Approved' | 'Rejected'): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/admin/accounts/${id}/review`, { status });
+  }
+
+  verificationDocumentUrl(id: string): string {
+    return `${this.apiUrl}/admin/accounts/${id}/verification-document`;
+  }
+
 }

@@ -1,0 +1,11 @@
+.roles-loading {
+  margin: 14px 0 0;
+  color: #78827d;
+  font-size: 11px;
+  text-align: center;
+}
+
+.portal-menu button.selected {
+  border-color: #8ba894;
+  background: #edf3ee;
+}
