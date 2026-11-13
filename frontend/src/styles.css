@@ -5,3 +5,266 @@ html { min-width: 320px; min-height: 100%; background: #fbfcfa; }
 body { min-width: 320px; min-height: 100vh; margin: 0; color: #25342f; font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; -webkit-font-smoothing: antialiased; }
 button, input { font: inherit; }
 button:focus-visible, input:focus-visible { outline: 2px solid #6f9c7d; outline-offset: 3px; }
+
+.dashboard-shell {
+  font-size: 15px;
+}
+
+.dashboard-shell .welcome-row .eyebrow,
+.dashboard-shell app-admin-portal .admin-section .eyebrow {
+  font-size: 11px;
+  letter-spacing: 1.2px;
+}
+
+.dashboard-shell .welcome-row .welcome-copy {
+  max-width: 62ch;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.dashboard-shell .topbar .user-info strong {
+  font-size: 14px;
+}
+
+.dashboard-shell .topbar .user-info small,
+.dashboard-shell .panel .safe-note,
+.dashboard-shell .panel .review-row span,
+.dashboard-shell .record-list .donation-meta span,
+.dashboard-shell .record-list .detail-note,
+.dashboard-shell .record-list .pickup-info,
+.dashboard-shell .record-list .recipient-line,
+.dashboard-shell .record-list .timeline strong {
+  font-size: 13px;
+}
+
+.dashboard-shell .primary-button.primary-button,
+.dashboard-shell .text-button.text-button,
+.dashboard-shell .filters.filters button,
+.dashboard-shell .donation-form.donation-form label,
+.dashboard-shell .empty-copy.empty-copy,
+.dashboard-shell .empty-panel.empty-panel p,
+.dashboard-shell .record-list .timeline small,
+.dashboard-shell .alert.alert {
+  font-size: 13px;
+}
+
+.dashboard-shell .verification-pill.verification-pill,
+.dashboard-shell .stats .stat-card small,
+.dashboard-shell .panel .review-row strong,
+.dashboard-shell .type-pill.type-pill,
+.dashboard-shell .status-pill.status-pill,
+.dashboard-shell .record-list .donation-meta b,
+.dashboard-shell .record-list .pickup-info strong {
+  font-size: 12px;
+}
+
+.dashboard-shell .stats .stat-card strong {
+  font-size: 26px;
+}
+
+.dashboard-shell .panel.panel h2,
+.dashboard-shell app-donor-portal .section-heading.section-heading h2,
+.dashboard-shell app-recipient-portal .section-heading.section-heading h2,
+.dashboard-shell app-admin-portal .section-heading.section-heading h2 {
+  font-size: clamp(22px, 2.4vw, 27px);
+}
+
+.dashboard-shell .donation-form.donation-form input,
+.dashboard-shell .donation-form.donation-form select,
+.dashboard-shell .donation-form.donation-form textarea,
+.dashboard-shell app-donor-portal .workflow-form.workflow-form input,
+.dashboard-shell app-donor-portal .workflow-form.workflow-form select,
+.dashboard-shell app-recipient-portal .workflow-form.workflow-form input,
+.dashboard-shell app-recipient-portal .workflow-form.workflow-form select,
+.dashboard-shell .contribution-form.contribution-form input {
+  min-height: 46px;
+  padding: 11px 12px;
+  font-size: 14px;
+}
+
+.dashboard-shell .donation-form.donation-form textarea,
+.dashboard-shell app-recipient-portal .workflow-form.workflow-form textarea {
+  min-height: 96px;
+}
+
+.dashboard-shell .primary-button {
+  min-height: 42px;
+  padding: 10px 15px;
+}
+
+.dashboard-shell .text-button {
+  min-height: 38px;
+}
+
+.dashboard-shell .record-list .donation-description,
+.dashboard-shell .overview-records .progress-copy,
+.dashboard-shell .record-list .detail-note,
+.dashboard-shell .record-list .recipient-line,
+.dashboard-shell app-donor-portal .role-overview-card.role-overview-card span,
+.dashboard-shell app-recipient-portal .role-overview-card.role-overview-card span,
+.dashboard-shell app-donor-portal .role-guide.role-guide ol,
+.dashboard-shell app-recipient-portal .role-guide.role-guide ol,
+.dashboard-shell app-donor-portal .guide-link.guide-link,
+.dashboard-shell app-recipient-portal .guide-link.guide-link,
+.dashboard-shell app-donor-portal .workflow-form.workflow-form label,
+.dashboard-shell app-recipient-portal .workflow-form.workflow-form label,
+.dashboard-shell .contribution-form.contribution-form label,
+.dashboard-shell .contribution-row.contribution-row,
+.dashboard-shell .need-byline.need-byline,
+.dashboard-shell .review-note.review-note {
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.dashboard-shell app-donor-portal .role-guide.role-guide h3,
+.dashboard-shell app-recipient-portal .role-guide.role-guide h3 {
+  font-size: 21px;
+}
+
+.dashboard-shell app-donor-portal .role-guide,
+.dashboard-shell app-recipient-portal .role-guide {
+  padding: 20px;
+}
+
+.dashboard-shell app-donor-portal .role-overview-grid.role-overview-grid,
+.dashboard-shell app-recipient-portal .role-overview-grid.role-overview-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.dashboard-shell .empty-panel {
+  min-height: 210px;
+  padding: 24px;
+}
+
+.dashboard-shell .empty-panel p {
+  max-width: 55ch;
+  line-height: 1.6;
+}
+
+.dashboard-shell .page-footer {
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 900px) {
+  .dashboard-shell app-donor-portal .role-overview-grid.role-overview-grid,
+  .dashboard-shell app-recipient-portal .role-overview-grid.role-overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .dashboard-shell .stats.stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-shell .stats .stat-card.stat-card {
+    min-width: 0;
+    flex-direction: row;
+    align-items: center;
+    padding: 14px;
+  }
+
+  .dashboard-shell .stats .stat-card small {
+    line-height: 1.45;
+  }
+
+  .dashboard-shell app-donor-portal .donation-grid.donation-grid,
+  .dashboard-shell app-recipient-portal .donation-grid.donation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-shell app-donor-portal .workflow-form,
+  .dashboard-shell app-recipient-portal .workflow-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .dashboard-shell .topbar.topbar {
+    min-height: 72px;
+    gap: 8px;
+  }
+
+  .dashboard-shell .user-menu.user-menu {
+    min-width: 0;
+    gap: 6px;
+  }
+
+  .dashboard-shell .user-info.user-info {
+    min-width: 0;
+    max-width: 105px;
+  }
+
+  .dashboard-shell .topbar .user-info strong {
+    font-size: 12px;
+  }
+
+  .dashboard-shell .topbar .user-info small,
+  .dashboard-shell .welcome-row .welcome-copy {
+    font-size: 14px;
+  }
+
+  .dashboard-shell .stats.stats {
+    gap: 9px;
+  }
+
+  .dashboard-shell .stats .stat-card.stat-card {
+    gap: 9px;
+    padding: 12px;
+  }
+
+  .dashboard-shell .stats .stat-card strong {
+    font-size: 24px;
+  }
+
+  .dashboard-shell .stats .stat-card small {
+    font-size: 12px;
+  }
+
+  .dashboard-shell .panel.panel {
+    padding: 17px;
+  }
+
+  .dashboard-shell app-donor-portal .donation-form.donation-form,
+  .dashboard-shell app-recipient-portal .donation-form.donation-form,
+  .dashboard-shell app-donor-portal .donation-grid.donation-grid,
+  .dashboard-shell app-recipient-portal .donation-grid.donation-grid,
+  .dashboard-shell app-donor-portal .role-overview-grid.role-overview-grid,
+  .dashboard-shell app-recipient-portal .role-overview-grid.role-overview-grid,
+  .dashboard-shell app-donor-portal .workflow-form.workflow-form,
+  .dashboard-shell app-recipient-portal .workflow-form.workflow-form,
+  .dashboard-shell app-donor-portal .contribution-form.contribution-form,
+  .dashboard-shell app-recipient-portal .contribution-form.contribution-form {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-shell app-donor-portal .wide,
+  .dashboard-shell app-donor-portal .form-footnote,
+  .dashboard-shell app-recipient-portal .wide,
+  .dashboard-shell app-recipient-portal .form-footnote {
+    grid-column: auto;
+  }
+
+  .dashboard-shell app-donor-portal .section-heading.section-heading,
+  .dashboard-shell app-recipient-portal .section-heading.section-heading {
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .dashboard-shell .verification-pill {
+    white-space: normal;
+  }
+
+  .dashboard-shell app-donor-portal .role-guide.role-guide,
+  .dashboard-shell app-recipient-portal .role-guide.role-guide {
+    padding: 17px;
+  }
+}
+
+@media (max-width: 360px) {
+  .dashboard-shell .stats .stat-card.stat-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

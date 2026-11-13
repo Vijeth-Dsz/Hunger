@@ -1,0 +1,51 @@
+:host {
+  display: block;
+}
+
+.record-list {
+  display: grid;
+  gap: 10px;
+}
+
+.overview-records {
+  margin-top: 20px;
+}
+
+.record-review-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  color: #78827d;
+  font-size: 10px;
+}
+
+.contribution-form button {
+  grid-column: 1 / -1;
+}
+
+.contribution-row small {
+  display: block;
+  margin-top: 4px;
+  color: #78827d;
+}
+
+.record-review-status {
+  flex-wrap: wrap;
+  font-size: 13px;
+}
+
+.contribution-row small {
+  font-size: 12px;
+}
+
+@media (max-width: 520px) {
+  .contribution-form button {
+    grid-column: auto;
+    width: 100%;
+  }
+
+  .record-review-status {
+    align-items: flex-start;
+  }
+}

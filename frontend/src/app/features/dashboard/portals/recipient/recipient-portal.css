@@ -1,0 +1,26 @@
+:host {
+  display: block;
+}
+
+.record-list {
+  display: grid;
+  gap: 10px;
+}
+
+.overview-records {
+  margin-top: 20px;
+}
+
+.contribution-row small {
+  display: block;
+  margin-top: 4px;
+  color: #78827d;
+  font-size: 12px;
+}
+
+@media (max-width: 520px) {
+  .contribution-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,128 @@
+<main class="dashboard-shell">
+  <header class="topbar">
+    <a class="brand" href="/dashboard">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M12 3v18M6 7h12M7 7c0 3 2 5 5 5s5-2 5-5M8 21V7m8 14V7" />
+        </svg>
+      </span>
+      {{ commonCopy.brand }}
+    </a>
+    <div class="user-menu">
+      @if (account(); as user) {
+        <span class="user-info">
+          <strong>{{ user.organizationName }}</strong>
+          <small>{{ user.name }}</small>
+        </span>
+        <span class="role-label">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path [attr.d]="roleIconPath" />
+          </svg>
+          {{ label(user.role) }}
+        </span>
+        <button class="sign-out" type="button" (click)="logout()">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M10 5H5v14h5m5-4 4-3-4-3m4 3H9" />
+          </svg>
+          {{ commonCopy.signOut }}
+        </button>
+      }
+    </div>
+  </header>
+
+  @if (isDonor || isRecipient) {
+    <app-portal-tabs
+      [tabs]="portalTabs"
+      [activeTab]="activePortalTab()"
+      [label]="copy.menuLabel"
+      (tabChange)="selectPortalTab($event)" />
+  }
+
+  @if (isAdmin || activePortalTab() === 'overview') {
+    <section id="overview" class="welcome-row">
+      <div class="welcome-content">
+        <p class="eyebrow">{{ isAdmin ? copy.adminEyebrow : copy.communityEyebrow }}</p>
+        <h1>{{ isAdmin ? copy.adminWelcome : copy.welcome + ' ' + (account()?.name || copy.friend) + '.' }}</h1>
+        <p class="welcome-copy">
+          {{ isDonor
+            ? copy.donorIntro
+            : isRecipient
+              ? copy.recipientIntro
+              : copy.adminIntro }}
+        </p>
+      </div>
+      @if (account()) {
+        <img class="role-illustration" [src]="roleImage" [alt]="roleImageAlt" />
+      }
+      @if (!isAdmin && account()?.verificationStatus === 'Pending') {
+        <span class="verification-pill">{{ copy.accountPending }}</span>
+      }
+      @if (!isAdmin && account()?.verificationStatus === 'Rejected') {
+        <span class="verification-pill rejected-pill">{{ copy.accountRejected }}</span>
+      }
+    </section>
+  }
+  @if (!isAdmin && account()?.verificationStatus === 'Rejected') {
+    <p class="account-rejected-message" role="alert">{{ copy.accountRejectedDetails }}</p>
+  }
+
+  @if (error()) {
+    <p class="alert error" role="alert">{{ error() }}</p>
+  }
+
+  @if (isAdmin || activePortalTab() === 'overview') {
+    <section class="stats" [attr.aria-label]="copy.activitySummary">
+      <article class="stat-card">
+        <span class="stat-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false"><path d="M3 11h18c0 5-4 9-9 9s-9-4-9-9ZM12 3v5M9 5h6" /></svg>
+        </span>
+        <div>
+          <strong>{{ loading() ? '…' : summary().total }}</strong>
+          <small>{{ isAdmin ? copy.communityDonations : isRecipient ? copy.donationRequests : copy.donationsShared }}</small>
+        </div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2M19 5l2 2" /></svg>
+        </span>
+        <div>
+          <strong>{{ loading() ? '…' : summary().active }}</strong>
+          <small>{{ isRecipient ? copy.inProgress : copy.remaining }}</small>
+        </div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false"><path d="M3 12h5l3 3h4l6-6-2-2-5 4h-3M3 12v7h5M21 10v9h-5" /></svg>
+        </span>
+        <div>
+          <strong>{{ loading() ? '…' : summary().accepted }}</strong>
+          <small>{{ isRecipient ? copy.acceptedRecipient : copy.acceptedPickup }}</small>
+        </div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false"><path d="M12 3 20 6v5c0 5-3.4 8.3-8 10-4.6-1.7-8-5-8-10V6l8-3Z" /><path d="m8.5 12 2.3 2.3 4.7-4.8" /></svg>
+        </span>
+        <div>
+          <strong>{{ loading() ? '…' : summary().delivered }}</strong>
+          <small>{{ copy.successfulReceived }}</small>
+        </div>
+      </article>
+    </section>
+  }
+
+  @if (account(); as user) {
+    @if (user.role === 'Donor') {
+      <app-donor-portal [approved]="user.verificationStatus === 'Approved'" [activeTab]="activePortalTab()" (tabChange)="selectPortalTab($event)" />
+    } @else if (user.role === 'Recipient') {
+      <app-recipient-portal [approved]="user.verificationStatus === 'Approved'" [activeTab]="activePortalTab()" (tabChange)="selectPortalTab($event)" />
+    } @else if (user.role === 'Admin') {
+      <app-admin-portal />
+    }
+  }
+
+  <footer class="page-footer">
+    {{ commonCopy.goodFood }}
+    <span aria-hidden="true">✳</span>
+  </footer>
+</main>

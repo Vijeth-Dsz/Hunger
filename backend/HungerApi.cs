@@ -1,12 +1,10 @@
-using Hunger.Api;
 using Hunger.Api.Data;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 var connectionString = builder.Configuration.GetConnectionString("Default")
     ?? throw new InvalidOperationException("Connection string 'Default' is not configured.");
 var adminName = builder.Configuration["Admin:Name"]
@@ -30,8 +28,16 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.Events.OnRedirectToAccessDenied = context => { context.Response.StatusCode = 403; return Task.CompletedTask; };
 });
 builder.Services.AddAuthorization();
+builder.Services.AddDbContext<HungerDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options => options.SwaggerDoc("v1", new()
+{
+    Title = "Hunger API",
+    Version = "v1",
+    Description = "API for Hunger community food and goods sharing.",
+}));
 
 var app = builder.Build();
 app.UseExceptionHandler(errorApp => errorApp.Run(async context =>
@@ -47,15 +53,16 @@ if (app.Environment.IsDevelopment())
 }
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapGet("/api/health", async (CancellationToken ct) =>
-{
-    await using var connection = new Microsoft.Data.SqlClient.SqlConnection(connectionString);
-    await connection.OpenAsync(ct);
-    return Results.Ok(new { status = "ok", application = "Hunger" });
-});
-AuthEndpoints.Map(app, connectionString);
-DonationEndpoints.Map(app, connectionString);
+app.MapGet("/api/health", async (HungerDbContext db, CancellationToken ct) =>
+    await db.Database.CanConnectAsync(ct)
+        ? Results.Ok(new { status = "ok", application = "Hunger" })
+        : Results.StatusCode(StatusCodes.Status503ServiceUnavailable));
+app.MapControllers();
 await DatabaseInitializer.InitializeAsync(connectionString, app.Logger);
-await AuthEndpoints.SeedAdminAsync(connectionString, adminName, adminEmail, adminOrganization, adminPassword);
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<HungerDbContext>();
+    await AuthSeeder.SeedAdminAsync(db, adminName, adminEmail, adminOrganization, adminPassword);
+}
 app.Logger.LogInformation("Hunger API ready.");
 app.Run();
